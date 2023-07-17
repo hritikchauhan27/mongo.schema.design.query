@@ -1,0 +1,182 @@
+Embedded Document 
+1. Insertion
+db.users.insertOne({
+  name: "Hritik",
+  address: {
+    street: "abc",
+    city: "Ghaziabad",
+    state: "UP",
+  },
+});
+
+2.push,pull,pullAll,$Elementmatch 
+
+db.users.updateOne({
+  name: "Hritik",
+}, {
+  $push: {
+    address: {
+      phone: "123-456-7890",
+    },
+  },
+});
+db.users.updateOne({
+  name: "Hritik",
+}, {
+  $pull: {
+    address: {
+      phone: "123-456-7890",
+    },
+  },
+});
+db.users.updateOne({
+  name: "Hritik",
+}, {
+  $pullAll: {
+    address: {
+      phone: ["123-456-7890", "555-666-7777"],
+    },
+  },
+});
+db.users.updateOne({
+  name: "Hritik",
+}, {
+  $pullAll: {
+    address: {
+      phone: {
+        $nin: phoneNumbers,
+      },
+    },
+  },
+});
+
+3. update many usingfilter
+
+db.users.updateMany({
+  name: "Hritik",
+  address: {
+    city: "New York",
+  },
+}, {
+  $set: {
+    address: {
+      state: "NY",
+    },
+  },
+});
+
+4. increment document
+
+db.users.updateOne({
+  name: "Hritik",
+}, {
+  $inc: {
+    age: 22,
+  },
+});
+5. $exist
+
+db.users.findOne({
+  name: "Hritik",
+  $exists: {
+    address: true,
+  },
+});
+
+
+
+Schema Design 
+
+1.user on boarding 
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+});
+
+2. session management
+
+const SessionSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  token: {
+    type: String,
+    required: true
+  },
+  expiresAt: {
+    type: Date,
+    required: true
+  },
+  
+});
+
+
+3. post
+
+const PostSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  
+});
+
+4. action---> comment,like
+
+const CommentSchema = new mongoose.Schema({
+  postId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  
+});
+
+const LikeSchema = new mongoose.Schema({
+  postId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  
+});
